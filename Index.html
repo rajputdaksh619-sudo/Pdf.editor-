@@ -3,111 +3,176 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Quick PDF Editor - Free Online PDF Modifier</title>
+    <title>Easy PDF Editor - Edit, Merge, and Sign</title>
+    <!-- Adding FontAwesome for professional icons -->
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <style>
-        body { font-family: 'Segoe UI', Arial, sans-serif; background-color: #f4f6f9; margin: 0; padding: 20px; color: #333; }
-        .container { max-width: 800px; margin: 0 auto; background: white; padding: 30px; border-radius: 12px; box-shadow: 0 4px 15px rgba(0,0,0,0.05); }
-        h1 { color: #2c3e50; text-align: center; }
-        .upload-zone { border: 2px dashed #3498db; border-radius: 8px; padding: 40px; text-align: center; cursor: pointer; background: #eef7fc; transition: 0.3s; }
-        .upload-zone:hover { background: #e1f0fa; }
-        .editor-panel { display: none; margin-top: 20px; border-top: 2px solid #eee; padding-top: 20px; }
-        .controls { display: grid; grid-template-columns: repeat(auto-fit, minmax(150px, 1fr)); gap: 10px; margin-bottom: 20px; }
-        button, label.btn { background: #3498db; color: white; border: none; padding: 12px 20px; border-radius: 6px; font-weight: bold; cursor: pointer; text-align: center; }
-        button:hover, label.btn:hover { background: #2980b9; }
-        .pay-banner { display: none; background: #fff3cd; border: 1px solid #ffeeba; color: #856404; padding: 20px; border-radius: 8px; text-align: center; margin-top: 20px; }
-        .pay-btn { background: #27ae60; margin-top: 10px; }
-        .pay-btn:hover { background: #219653; }
-        #timer { font-size: 24px; font-weight: bold; margin: 10px 0; color: #e74c3c; }
+        /* Base Sejda Styles */
+        body { font-family: -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif; margin: 0; padding: 0; background-color: #f7f9fa; color: #333; }
+        
+        /* Header */
+        header { background: white; padding: 15px 30px; box-shadow: 0 1px 3px rgba(0,0,0,0.1); display: flex; justify-content: space-between; align-items: center; }
+        .logo { font-size: 20px; font-weight: 700; color: #2c3e50; display: flex; align-items: center; gap: 8px; }
+        .logo i { color: #e74c3c; }
+
+        /* Home Page / Upload Area */
+        .home-container { max-width: 800px; margin: 60px auto; text-align: center; padding: 20px; }
+        .home-container h1 { font-size: 36px; color: #2c3e50; margin-bottom: 10px; }
+        .home-container p { font-size: 18px; color: #5c6873; margin-bottom: 40px; }
+        
+        .upload-box { background: white; border: 2px dashed #b3c0ce; border-radius: 12px; padding: 60px 20px; transition: 0.2s; cursor: pointer; }
+        .upload-box:hover { border-color: #1e87f0; background-color: #f8fbff; }
+        .btn-upload { background-color: #5cb85c; color: white; padding: 18px 40px; border-radius: 30px; font-size: 18px; font-weight: 600; border: none; cursor: pointer; display: inline-flex; align-items: center; gap: 10px; transition: 0.2s; box-shadow: 0 4px 6px rgba(92, 184, 92, 0.2); }
+        .btn-upload:hover { background-color: #4cae4c; transform: translateY(-1px); }
+
+        /* Editor Interface (Hidden by default) */
+        .editor-container { display: none; height: 100vh; display: flex; flex-direction: column; }
+        .editor-toolbar { background: #2c3e50; color: white; padding: 10px 20px; display: flex; gap: 15px; align-items: center; flex-wrap: wrap; }
+        .toolbar-btn { background: transparent; color: #ecf0f1; border: 1px solid #34495e; padding: 8px 12px; border-radius: 4px; cursor: pointer; display: flex; align-items: center; gap: 6px; }
+        .toolbar-btn:hover { background: #34495e; color: white; }
+        .toolbar-input { padding: 8px; border-radius: 4px; border: none; outline: none; }
+        
+        .workspace { flex: 1; background: #e0e6ed; display: flex; justify-content: center; padding: 30px; overflow-y: auto; }
+        .pdf-page-mockup { background: white; width: 100%; max-width: 600px; height: 800px; box-shadow: 0 4px 12px rgba(0,0,0,0.1); padding: 40px; text-align: center; color: #aaa; border-radius: 2px; }
+        
+        .bottom-bar { background: white; padding: 15px 30px; text-align: right; box-shadow: 0 -1px 3px rgba(0,0,0,0.1); }
+        .btn-apply { background-color: #5cb85c; color: white; padding: 12px 25px; border-radius: 4px; font-size: 16px; font-weight: 600; border: none; cursor: pointer; }
+        .btn-apply:hover { background-color: #4cae4c; }
+
+        /* Paywall Modal */
+        .modal-overlay { display: none; position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.6); justify-content: center; align-items: center; z-index: 1000; }
+        .paywall-card { background: white; padding: 40px; border-radius: 12px; max-width: 450px; text-align: center; box-shadow: 0 10px 30px rgba(0,0,0,0.2); width: 90%; }
+        .paywall-card h2 { margin-top: 0; color: #2c3e50; }
+        .timer-badge { background: #fee2e2; color: #ef4444; font-size: 28px; font-weight: bold; padding: 15px; border-radius: 8px; margin: 20px 0; display: inline-block; }
+        .btn-pay { background: #1e87f0; color: white; padding: 15px; width: 100%; border: none; border-radius: 6px; font-size: 18px; font-weight: bold; cursor: pointer; margin-top: 10px; }
+        .btn-pay:hover { background: #0f7ae5; }
     </style>
 </head>
 <body>
 
-<div class="container">
-    <h1>📄 Quick PDF Editor</h1>
-    <p style="text-align: center;">Edit lines, names, fonts, and colors instantly.</p>
+    <!-- Default View: The Upload Page -->
+    <div id="home-view">
+        <header>
+            <div class="logo"><i class="fa-regular fa-file-pdf"></i> EasyPDF</div>
+            <div style="font-size: 14px; color: #777;">Pricing</div>
+        </header>
 
-    <!-- Upload Section -->
-    <div class="upload-zone" id="dropzone">
-        <label for="pdf-file" class="btn">Choose PDF File</label>
-        <input type="file" id="pdf-file" accept=".pdf" style="display: none;">
-        <p>or drag and drop your PDF here</p>
-    </div>
+        <div class="home-container">
+            <h1>Online PDF Editor</h1>
+            <p>Fill out PDF forms, change text, add images quickly and securely.</p>
 
-    <!-- Simulated Editor Controls -->
-    <div class="editor-panel" id="editor">
-        <h3>Modify Content</h3>
-        <div class="controls">
-            <input type="text" id="findText" placeholder="Text to change (e.g., John)">
-            <input type="text" id="replaceText" placeholder="New text (e.g., Rahul)">
-            <input type="color" id="fontColor" title="Choose color">
-            <select id="fontSize">
-                <option value="12">12px</option>
-                <option value="14">14px</option>
-                <option value="16" selected>16px</option>
-                <option value="20">20px</option>
-            </select>
+            <div class="upload-box" onclick="document.getElementById('file-upload').click()">
+                <label class="btn-upload">
+                    <i class="fa-solid fa-cloud-arrow-up"></i> Upload PDF file
+                </label>
+                <input type="file" id="file-upload" accept=".pdf" style="display: none;">
+                <p style="margin-top: 20px; font-size: 14px; color: #888;">Files stay private. Automatically deleted after 2 hours.</p>
+            </div>
         </div>
-        <button id="saveBtn">Apply Changes & Download</button>
     </div>
 
-    <!-- 50-Minute Paywall Banner -->
-    <div class="pay-banner" id="paywall">
-        <h2>🔒 Daily Free Limit Reached!</h2>
-        <p>You have used your 2 free edits. Please wait 50 minutes or bypass the timer immediately for just ₹2.</p>
-        <div id="timer">50:00</div>
-        <button class="pay-btn" onclick="simulatePayment()">Pay ₹2 via UPI to Edit Now</button>
+    <!-- The Editor View (Hidden until upload) -->
+    <div id="editor-view" class="editor-container">
+        <header style="background: #1a252f; color: white; padding: 10px 20px;">
+            <div class="logo" style="color: white;"><i class="fa-regular fa-file-pdf"></i> EasyPDF Editor</div>
+        </header>
+        
+        <div class="editor-toolbar">
+            <button class="toolbar-btn"><i class="fa-solid fa-text-height"></i> Text</button>
+            <button class="toolbar-btn"><i class="fa-solid fa-link"></i> Links</button>
+            <button class="toolbar-btn"><i class="fa-solid fa-eraser"></i> Whiteout</button>
+            <div style="width: 1px; height: 20px; background: #555; margin: 0 10px;"></div>
+            <input type="text" class="toolbar-input" placeholder="Find text...">
+            <input type="text" class="toolbar-input" placeholder="Replace with...">
+        </div>
+
+        <div class="workspace">
+            <div class="pdf-page-mockup">
+                <i class="fa-regular fa-file-lines" style="font-size: 40px; margin-bottom: 20px;"></i>
+                <p>Your PDF document will appear here.</p>
+            </div>
+        </div>
+
+        <div class="bottom-bar">
+            <button class="btn-apply" id="apply-btn">Apply changes & Download</button>
+        </div>
     </div>
-</div>
+
+    <!-- The Premium Paywall Modal -->
+    <div class="modal-overlay" id="paywall-modal">
+        <div class="paywall-card">
+            <h2>Daily Free Limit Reached</h2>
+            <p>You have used your 2 free edits for today. To keep our servers running, we limit free usage.</p>
+            <p>Wait for your timer to reset, or skip the line for just <strong>₹2</strong>.</p>
+            
+            <div class="timer-badge" id="timer">50:00</div>
+            
+            <button class="btn-pay" onclick="simulatePayment()">
+                <i class="fa-solid fa-bolt"></i> Pay ₹2 via UPI to Skip
+            </button>
+        </div>
+    </div>
 
 <script>
-    // State Tracking
+    // System Variables
     let editsUsed = parseInt(localStorage.getItem('editsUsed')) || 0;
     let lastEditTime = localStorage.getItem('lastEditTime') || null;
 
-    const fileInput = document.getElementById('pdf-file');
-    const editor = document.getElementById('editor');
-    const paywall = document.getElementById('paywall');
-    const saveBtn = document.getElementById('saveBtn');
+    const fileInput = document.getElementById('file-upload');
+    const homeView = document.getElementById('home-view');
+    const editorView = document.getElementById('editor-view');
+    const paywallModal = document.getElementById('paywall-modal');
+    const applyBtn = document.getElementById('apply-btn');
 
-    // Handle File Upload Display
+    // Handle User Uploading a File
     fileInput.addEventListener('change', () => {
         if(fileInput.files.length > 0) {
-            checkAccess();
+            checkAccessLimits();
         }
     });
 
-    function checkAccess() {
+    // Check if user is allowed to edit or if they hit the paywall
+    function checkAccessLimits() {
         const now = new Date().getTime();
         
-        // If 50 minutes (3,000,000 ms) have passed, reset the limit
+        // Reset limit if 50 minutes (3,000,000 ms) have passed
         if (lastEditTime && (now - lastEditTime > 3000000)) {
             editsUsed = 0;
             localStorage.setItem('editsUsed', '0');
         }
 
         if (editsUsed >= 2) {
-            editor.style.display = 'none';
-            paywall.style.display = 'block';
+            // Show paywall
+            paywallModal.style.display = 'flex';
+            homeView.style.display = 'block';
+            editorView.style.display = 'none';
+            editorView.style.setProperty('display', 'none', 'important'); // force hide
             startTimer();
         } else {
-            paywall.style.display = 'none';
-            editor.style.display = 'block';
+            // Show editor
+            homeView.style.display = 'none';
+            editorView.style.display = 'flex';
         }
     }
 
-    // Process Download and track limits
-    saveBtn.addEventListener('click', () => {
+    // User clicks Apply & Download
+    applyBtn.addEventListener('click', () => {
         editsUsed++;
         localStorage.setItem('editsUsed', editsUsed);
         localStorage.setItem('lastEditTime', new Date().getTime());
         
-        alert("Success! Your modified PDF is downloading.");
-        checkAccess();
+        alert("Processing complete! Your modified PDF is downloading.");
+        
+        // Return to home state
+        homeView.style.display = 'block';
+        editorView.style.display = 'none';
+        editorView.style.setProperty('display', 'none', 'important');
+        fileInput.value = ""; // clear input
     });
 
-    // 50-Minute Countdown Timer
+    // 50-Minute Countdown
     function startTimer() {
-        let duration = 50 * 60; // 50 minutes in seconds
+        let duration = 50 * 60; // 50 minutes
         const timerDisplay = document.getElementById('timer');
         
         const interval = setInterval(() => {
@@ -120,16 +185,21 @@
                 clearInterval(interval);
                 editsUsed = 0;
                 localStorage.setItem('editsUsed', '0');
-                checkAccess();
+                paywallModal.style.display = 'none';
             }
         }, 1000);
     }
 
+    // Payment Simulation
     function simulatePayment() {
-        alert("Redirecting to Razorpay UPI... (Simulated payment of ₹2 successful!)");
+        alert("Redirecting to Razorpay UPI... (Payment of ₹2 successful!)");
         editsUsed = 0;
         localStorage.setItem('editsUsed', '0');
-        checkAccess();
+        paywallModal.style.display = 'none';
+        
+        // Let them into the editor since they paid
+        homeView.style.display = 'none';
+        editorView.style.display = 'flex';
     }
 </script>
 </body>
